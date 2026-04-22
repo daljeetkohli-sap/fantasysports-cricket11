@@ -1,5 +1,6 @@
-export default function ContestCard({ contest }) {
+export default function ContestCard({ contest, onJoin, isJoined }) {
   const fill = (contest.filled / contest.size) * 100;
+  const isFull = contest.filled >= contest.size;
   return (
     <div className="card">
       <div className="row-between">
@@ -21,6 +22,9 @@ export default function ContestCard({ contest }) {
         <span>{contest.filled} joined</span>
         <span>{contest.size - contest.filled} left</span>
       </div>
+      <button className="btn primary wide" disabled={isFull || isJoined} onClick={() => onJoin(contest.id)}>
+        {isJoined ? 'Joined' : isFull ? 'Contest Full' : 'Join Contest'}
+      </button>
     </div>
   );
 }

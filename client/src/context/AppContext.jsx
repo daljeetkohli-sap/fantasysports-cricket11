@@ -13,15 +13,22 @@ export function AppProvider({ children }) {
   const [selectedPlayers, setSelectedPlayers] = useState([]);
   const [captain, setCaptain] = useState('');
   const [viceCaptain, setViceCaptain] = useState('');
+  const [isLoading, setIsLoading] = useState(true);
+  const [loadError, setLoadError] = useState('');
+  const [teamStatus, setTeamStatus] = useState('');
+  const [contestStatus, setContestStatus] = useState('');
+  const [joinedContestIds, setJoinedContestIds] = useState([]);
 
   useEffect(() => {
+    setIsLoading(true);
+    setLoadError('');
     Promise.all([
-      fetch(`${API_URL}/matches`).then((r) => r.json()),
-      fetch(`${API_URL}/contests`).then((r) => r.json()),
-      fetch(`${API_URL}/players`).then((r) => r.json()),
-      fetch(`${API_URL}/teams`).then((r) => r.json()),
-      fetch(`${API_URL}/leaderboard`).then((r) => r.json()),
-      fetch(`${API_URL}/wallet`).then((r) => r.json())
+      fetchJson('/matches'),
+      fetchJson('/contests'),
+      fetchJson('/players'),
+      fetchJson('/teams'),
+      fetchJson('/leaderboard'),
+      fetchJson('/wallet')
     ])
       .then(([matchesData, contestsData, playersData, teamsData, leaderboardData, walletData]) => {
         setMatches(matchesData);
@@ -31,15 +38,21 @@ export function AppProvider({ children }) {
         setLeaderboard(leaderboardData);
         setWallet(walletData);
       })
-      .catch((error) => console.error('Failed to load data', error));
+      .catch((error) => {
+        setLoadError(error.message || 'Failed to load app data');
+      })
+      .finally(() => setIsLoading(false));
   }, []);
 
+  const playersById = useMemo(() => new Map(players.map((player) => [player.id, player])), [players]);
+
   const totalCredits = useMemo(
-    () => selectedPlayers.reduce((sum, playerId) => sum + (players.find((p) => p.id === playerId)?.credits || 0), 0),
-    [selectedPlayers, players]
+    () => selectedPlayers.reduce((sum, playerId) => sum + (playersById.get(playerId)?.credits || 0), 0),
+    [selectedPlayers, playersById]
   );
 
   const togglePlayer = (playerId) => {
+    setTeamStatus('');
     setSelectedPlayers((current) => {
       if (current.includes(playerId)) {
         if (captain === playerId) setCaptain('');
@@ -52,16 +65,19 @@ export function AppProvider({ children }) {
   };
 
   const assignCaptain = (playerId) => {
+    setTeamStatus('');
     setCaptain(playerId);
     if (viceCaptain === playerId) setViceCaptain('');
   };
 
   const assignViceCaptain = (playerId) => {
+    setTeamStatus('');
     setViceCaptain(playerId);
     if (captain === playerId) setCaptain('');
   };
 
   const saveTeam = async () => {
+    setTeamStatus('Saving team...');
     const payload = {
       name: `Team ${myTeams.length + 1}`,
       players: selectedPlayers,
@@ -77,7 +93,8 @@ export function AppProvider({ children }) {
 
     if (!response.ok) {
       const error = await response.json().catch(() => ({ error: 'Unable to save team' }));
-      throw new Error(error.error || 'Unable to save team');
+      setTeamStatus(error.error || 'Unable to save team');
+      return;
     }
 
     const data = await response.json();
@@ -85,6 +102,29 @@ export function AppProvider({ children }) {
     setSelectedPlayers([]);
     setCaptain('');
     setViceCaptain('');
+    setTeamStatus(`${data.name} saved`);
+  };
+
+  const joinContest = async (contestId) => {
+    if (joinedContestIds.includes(contestId)) return;
+
+    setContestStatus('Joining contest...');
+    const response = await fetch(`${API_URL}/contests/${contestId}/join`, { method: 'POST' });
+
+    if (!response.ok) {
+      const error = await response.json().catch(() => ({ error: 'Unable to join contest' }));
+      setContestStatus(error.error || 'Unable to join contest');
+      return;
+    }
+
+    const updatedContest = await response.json();
+    setContests((current) => current.map((contest) => (contest.id === updatedContest.id ? updatedContest : contest)));
+    setJoinedContestIds((current) => [...current, contestId]);
+    setContestStatus(`Joined ${updatedContest.title}`);
+  };
+
+  const getPlayerName = (playerId) => {
+    return playersById.get(playerId)?.name || playerId;
   };
 
   return (
@@ -96,14 +136,21 @@ export function AppProvider({ children }) {
         myTeams,
         leaderboard,
         wallet,
+        isLoading,
+        loadError,
+        teamStatus,
+        contestStatus,
+        joinedContestIds,
         selectedPlayers,
         totalCredits,
         captain,
         viceCaptain,
+        getPlayerName,
         setCaptain: assignCaptain,
         setViceCaptain: assignViceCaptain,
         togglePlayer,
-        saveTeam
+        saveTeam,
+        joinContest
       }}
     >
       {children}
@@ -115,4 +162,10 @@ export function useApp() {
   const context = useContext(AppContext);
   if (!context) throw new Error('useApp must be used within AppProvider');
   return context;
+}
+
+async function fetchJson(path) {
+  const response = await fetch(`${API_URL}${path}`);
+  if (!response.ok) throw new Error(`Request failed: ${path}`);
+  return response.json();
 }

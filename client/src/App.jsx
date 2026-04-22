@@ -5,8 +5,11 @@ import TeamBuilderPage from './pages/TeamBuilderPage';
 import MyTeamsPage from './pages/MyTeamsPage';
 import LeaderboardPage from './pages/LeaderboardPage';
 import WalletPage from './pages/WalletPage';
+import { useApp } from './context/AppContext';
 
 export default function App() {
+  const { isLoading, loadError } = useApp();
+
   return (
     <div className="app-shell">
       <header className="topbar">
@@ -18,14 +21,18 @@ export default function App() {
       </header>
 
       <main className="page-body">
-        <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/contests" element={<ContestsPage />} />
-          <Route path="/team-builder" element={<TeamBuilderPage />} />
-          <Route path="/my-teams" element={<MyTeamsPage />} />
-          <Route path="/leaderboard" element={<LeaderboardPage />} />
-          <Route path="/wallet" element={<WalletPage />} />
-        </Routes>
+        {isLoading && <div className="card status-card">Loading live contest data...</div>}
+        {loadError && <div className="card status-card error">{loadError}</div>}
+        {!isLoading && !loadError && (
+          <Routes>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/contests" element={<ContestsPage />} />
+            <Route path="/team-builder" element={<TeamBuilderPage />} />
+            <Route path="/my-teams" element={<MyTeamsPage />} />
+            <Route path="/leaderboard" element={<LeaderboardPage />} />
+            <Route path="/wallet" element={<WalletPage />} />
+          </Routes>
+        )}
       </main>
 
       <nav className="bottom-nav">

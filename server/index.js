@@ -25,6 +25,23 @@ app.get('/api/contests', (_, res) => {
   res.json(readJson('contests.json'));
 });
 
+app.post('/api/contests/:contestId/join', (req, res) => {
+  const contests = readJson('contests.json');
+  const contest = contests.find((item) => item.id === req.params.contestId);
+
+  if (!contest) {
+    return res.status(404).json({ error: 'Contest not found' });
+  }
+
+  if (contest.filled >= contest.size) {
+    return res.status(409).json({ error: 'Contest is full' });
+  }
+
+  contest.filled += 1;
+  writeJson('contests.json', contests);
+  res.json(contest);
+});
+
 app.get('/api/players', (_, res) => {
   res.json(readJson('players.json'));
 });
@@ -42,6 +59,11 @@ app.post('/api/teams', (req, res) => {
   const uniquePlayers = new Set(players);
   if (uniquePlayers.size !== players.length) {
     return res.status(400).json({ error: 'Team cannot contain duplicate players' });
+  }
+
+  const validPlayerIds = new Set(readJson('players.json').map((player) => player.id));
+  if (players.some((playerId) => !validPlayerIds.has(playerId))) {
+    return res.status(400).json({ error: 'Team contains an unknown player' });
   }
 
   if (!captain || !viceCaptain || captain === viceCaptain || !uniquePlayers.has(captain) || !uniquePlayers.has(viceCaptain)) {

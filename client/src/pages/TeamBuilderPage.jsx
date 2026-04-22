@@ -13,7 +13,9 @@ export default function TeamBuilderPage() {
     setCaptain,
     setViceCaptain,
     togglePlayer,
-    saveTeam
+    saveTeam,
+    teamStatus,
+    getPlayerName
   } = useApp();
 
   const selectedCount = selectedPlayers.length;
@@ -26,8 +28,8 @@ export default function TeamBuilderPage() {
       <div className="summary-grid">
         <div className="mini-card"><span>Selected</span><strong>{selectedCount}/11</strong></div>
         <div className="mini-card"><span>Credits Used</span><strong>{totalCredits}</strong></div>
-        <div className="mini-card"><span>Captain</span><strong>{captain || '-'}</strong></div>
-        <div className="mini-card"><span>Vice Captain</span><strong>{viceCaptain || '-'}</strong></div>
+        <div className="mini-card"><span>Captain</span><strong>{captain ? getPlayerName(captain) : '-'}</strong></div>
+        <div className="mini-card"><span>Vice Captain</span><strong>{viceCaptain ? getPlayerName(viceCaptain) : '-'}</strong></div>
       </div>
 
       <div className="card">
@@ -53,6 +55,7 @@ export default function TeamBuilderPage() {
       >
         Save Team
       </button>
+      {teamStatus && <p className="status-text">{teamStatus}</p>}
     </div>
   );
 }
