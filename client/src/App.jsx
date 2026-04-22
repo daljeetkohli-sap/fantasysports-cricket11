@@ -1,0 +1,40 @@
+import { Routes, Route, NavLink } from 'react-router-dom';
+import HomePage from './pages/HomePage';
+import ContestsPage from './pages/ContestsPage';
+import TeamBuilderPage from './pages/TeamBuilderPage';
+import MyTeamsPage from './pages/MyTeamsPage';
+import LeaderboardPage from './pages/LeaderboardPage';
+import WalletPage from './pages/WalletPage';
+
+export default function App() {
+  return (
+    <div className="app-shell">
+      <header className="topbar">
+        <div>
+          <p className="eyebrow">Fantasy Sports</p>
+          <h1>Playbook Arena</h1>
+        </div>
+        <div className="topbar-badge">Clean-room starter</div>
+      </header>
+
+      <main className="page-body">
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/contests" element={<ContestsPage />} />
+          <Route path="/team-builder" element={<TeamBuilderPage />} />
+          <Route path="/my-teams" element={<MyTeamsPage />} />
+          <Route path="/leaderboard" element={<LeaderboardPage />} />
+          <Route path="/wallet" element={<WalletPage />} />
+        </Routes>
+      </main>
+
+      <nav className="bottom-nav">
+        <NavLink to="/">Home</NavLink>
+        <NavLink to="/contests">Contests</NavLink>
+        <NavLink to="/team-builder">Build Team</NavLink>
+        <NavLink to="/my-teams">My Teams</NavLink>
+        <NavLink to="/wallet">Wallet</NavLink>
+      </nav>
+    </div>
+  );
+}

@@ -1,0 +1,10 @@
+{
+  "balance": 1250,
+  "bonus": 200,
+  "winnings": 450,
+  "transactions": [
+    { "id": "TX1", "type": "Contest Entry", "amount": -49, "date": "2026-04-20" },
+    { "id": "TX2", "type": "Winnings", "amount": 120, "date": "2026-04-20" },
+    { "id": "TX3", "type": "Add Cash", "amount": 1000, "date": "2026-04-19" }
+  ]
+}

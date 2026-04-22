@@ -1,0 +1,14 @@
+[
+  { "id": "P1", "name": "R. Sharma", "team": "Mumbai", "role": "BAT", "credits": 9.5, "points": 68 },
+  { "id": "P2", "name": "S. Yadav", "team": "Mumbai", "role": "BAT", "credits": 9, "points": 54 },
+  { "id": "P3", "name": "H. Pandya", "team": "Mumbai", "role": "AR", "credits": 9.5, "points": 78 },
+  { "id": "P4", "name": "J. Bumrah", "team": "Mumbai", "role": "BOWL", "credits": 9, "points": 73 },
+  { "id": "P5", "name": "I. Kishan", "team": "Mumbai", "role": "WK", "credits": 8.5, "points": 49 },
+  { "id": "P6", "name": "R. Gaikwad", "team": "Chennai", "role": "BAT", "credits": 9, "points": 66 },
+  { "id": "P7", "name": "M. Ali", "team": "Chennai", "role": "AR", "credits": 8.5, "points": 58 },
+  { "id": "P8", "name": "M. Theekshana", "team": "Chennai", "role": "BOWL", "credits": 8, "points": 47 },
+  { "id": "P9", "name": "M. Dhoni", "team": "Chennai", "role": "WK", "credits": 8, "points": 42 },
+  { "id": "P10", "name": "S. Dube", "team": "Chennai", "role": "BAT", "credits": 8.5, "points": 53 },
+  { "id": "P11", "name": "T. Deshpande", "team": "Chennai", "role": "BOWL", "credits": 7.5, "points": 38 },
+  { "id": "P12", "name": "T. Varma", "team": "Mumbai", "role": "BAT", "credits": 8, "points": 45 }
+]

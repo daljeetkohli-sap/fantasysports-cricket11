@@ -1,0 +1,24 @@
+[
+  {
+    "id": "M1",
+    "league": "IPL",
+    "teamA": "Mumbai",
+    "teamB": "Chennai",
+    "startTime": "Today, 7:30 PM",
+    "prizePool": "₹25 Lakhs",
+    "entry": 49,
+    "spotsLeft": 324,
+    "totalSpots": 1000
+  },
+  {
+    "id": "M2",
+    "league": "Premier League",
+    "teamA": "Arsenal",
+    "teamB": "Liverpool",
+    "startTime": "Tomorrow, 10:00 PM",
+    "prizePool": "₹10 Lakhs",
+    "entry": 59,
+    "spotsLeft": 180,
+    "totalSpots": 750
+  }
+]

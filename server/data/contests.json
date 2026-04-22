@@ -1,0 +1,29 @@
+[
+  {
+    "id": "C1",
+    "title": "Mega Clash",
+    "prizePool": "₹10,00,000",
+    "firstPrize": "₹2,50,000",
+    "entry": 49,
+    "filled": 65,
+    "size": 100
+  },
+  {
+    "id": "C2",
+    "title": "Winner Takes Bigger Bite",
+    "prizePool": "₹1,00,000",
+    "firstPrize": "₹25,000",
+    "entry": 99,
+    "filled": 30,
+    "size": 40
+  },
+  {
+    "id": "C3",
+    "title": "Starter Contest",
+    "prizePool": "₹5,000",
+    "firstPrize": "₹1,500",
+    "entry": 19,
+    "filled": 22,
+    "size": 25
+  }
+]
