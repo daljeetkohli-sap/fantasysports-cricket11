@@ -18,6 +18,13 @@ export function AppProvider({ children }) {
   const [teamStatus, setTeamStatus] = useState('');
   const [contestStatus, setContestStatus] = useState('');
   const [joinedContestIds, setJoinedContestIds] = useState([]);
+  const [currentUser, setCurrentUser] = useState(() => {
+    const savedUser = window.localStorage.getItem('fantasy-user');
+    return savedUser ? JSON.parse(savedUser) : null;
+  });
+  const [authStatus, setAuthStatus] = useState('');
+  const [paymentStatus, setPaymentStatus] = useState('');
+  const [activeUpiPayment, setActiveUpiPayment] = useState(null);
 
   useEffect(() => {
     setIsLoading(true);
@@ -127,6 +134,65 @@ export function AppProvider({ children }) {
     return playersById.get(playerId)?.name || playerId;
   };
 
+  const signInWithGoogle = async (credential) => {
+    setAuthStatus('Signing in...');
+    const response = await fetch(`${API_URL}/auth/google`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ credential })
+    });
+
+    const data = await response.json().catch(() => ({ error: 'Unable to sign in with Google' }));
+    if (!response.ok) {
+      setAuthStatus(data.error || 'Unable to sign in with Google');
+      return;
+    }
+
+    setCurrentUser(data.user);
+    window.localStorage.setItem('fantasy-user', JSON.stringify(data.user));
+    setAuthStatus(`Signed in as ${data.user.name}`);
+  };
+
+  const signOut = () => {
+    setCurrentUser(null);
+    setAuthStatus('');
+    window.localStorage.removeItem('fantasy-user');
+  };
+
+  const createUpiPayment = async ({ amount, upiId }) => {
+    setPaymentStatus('Creating UPI payment...');
+    setActiveUpiPayment(null);
+    const response = await fetch(`${API_URL}/payments/upi/create`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ amount, upiId })
+    });
+
+    const data = await response.json().catch(() => ({ error: 'Unable to create UPI payment' }));
+    if (!response.ok) {
+      setPaymentStatus(data.error || 'Unable to create UPI payment');
+      return;
+    }
+
+    setActiveUpiPayment(data.payment);
+    setPaymentStatus('Open the UPI link on your mobile device, then confirm in this demo.');
+  };
+
+  const confirmUpiPayment = async (paymentId) => {
+    setPaymentStatus('Confirming payment...');
+    const response = await fetch(`${API_URL}/payments/upi/${paymentId}/confirm`, { method: 'POST' });
+    const data = await response.json().catch(() => ({ error: 'Unable to confirm payment' }));
+
+    if (!response.ok) {
+      setPaymentStatus(data.error || 'Unable to confirm payment');
+      return;
+    }
+
+    setWallet(data.wallet);
+    setActiveUpiPayment(null);
+    setPaymentStatus('Payment recorded in demo wallet');
+  };
+
   return (
     <AppContext.Provider
       value={{
@@ -141,6 +207,10 @@ export function AppProvider({ children }) {
         teamStatus,
         contestStatus,
         joinedContestIds,
+        currentUser,
+        authStatus,
+        paymentStatus,
+        activeUpiPayment,
         selectedPlayers,
         totalCredits,
         captain,
@@ -150,7 +220,11 @@ export function AppProvider({ children }) {
         setViceCaptain: assignViceCaptain,
         togglePlayer,
         saveTeam,
-        joinContest
+        joinContest,
+        signInWithGoogle,
+        signOut,
+        createUpiPayment,
+        confirmUpiPayment
       }}
     >
       {children}

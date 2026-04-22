@@ -53,6 +53,12 @@ The Express server serves the built frontend from `client/dist` and the API from
 
 Set `PORT` for the server port. Set `VITE_API_URL` only if the frontend is deployed separately from the API.
 
+## Login and payments
+
+Google login and a UPI wallet top-up flow are scaffolded. Copy the `.env.example` files in `client` and `server`, then add your Google Web Client ID and UPI merchant values.
+
+More detail: [Google Login and UPI Payments](docs/auth-and-payments.md)
+
 ## Notes
 - This is a starter project and not connected to real payments, real users, or real sports feeds.
 - Brand, copy, and visuals are original and intentionally not a clone of any commercial platform.

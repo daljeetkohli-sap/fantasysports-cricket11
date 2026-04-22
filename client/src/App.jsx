@@ -6,6 +6,7 @@ import MyTeamsPage from './pages/MyTeamsPage';
 import LeaderboardPage from './pages/LeaderboardPage';
 import WalletPage from './pages/WalletPage';
 import { useApp } from './context/AppContext';
+import GoogleSignIn from './components/GoogleSignIn';
 
 export default function App() {
   const { isLoading, loadError } = useApp();
@@ -17,7 +18,7 @@ export default function App() {
           <p className="eyebrow">Fantasy Sports</p>
           <h1>Playbook Arena</h1>
         </div>
-        <div className="topbar-badge">Clean-room starter</div>
+        <GoogleSignIn />
       </header>
 
       <main className="page-body">

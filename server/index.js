@@ -2,9 +2,13 @@ const express = require('express');
 const cors = require('cors');
 const fs = require('fs');
 const path = require('path');
+require('dotenv').config({ path: path.join(__dirname, '.env') });
+const { OAuth2Client } = require('google-auth-library');
 
 const app = express();
 const PORT = process.env.PORT || 4000;
+const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
+const pendingPayments = new Map();
 
 app.use(cors());
 app.use(express.json());
@@ -92,14 +96,87 @@ app.get('/api/wallet', (_, res) => {
   res.json(readJson('wallet.json'));
 });
 
-app.post('/api/login', (req, res) => {
-  const { email } = req.body;
-  res.json({
-    id: 'U1001',
-    name: 'Dal Sports',
-    email,
-    token: 'mock-jwt-token'
+app.post('/api/auth/google', async (req, res) => {
+  const { credential } = req.body;
+
+  if (!process.env.GOOGLE_CLIENT_ID) {
+    return res.status(503).json({ error: 'Google login is not configured on the server' });
+  }
+
+  if (!credential) {
+    return res.status(400).json({ error: 'Missing Google credential' });
+  }
+
+  try {
+    const ticket = await googleClient.verifyIdToken({
+      idToken: credential,
+      audience: process.env.GOOGLE_CLIENT_ID
+    });
+    const payload = ticket.getPayload();
+
+    res.json({
+      user: {
+        id: payload.sub,
+        name: payload.name,
+        email: payload.email,
+        picture: payload.picture
+      }
+    });
+  } catch (error) {
+    res.status(401).json({ error: 'Invalid Google sign-in token' });
+  }
+});
+
+app.post('/api/payments/upi/create', (req, res) => {
+  const amount = Number(req.body.amount);
+  const upiId = String(req.body.upiId || '').trim();
+
+  if (!Number.isFinite(amount) || amount < 10 || amount > 10000) {
+    return res.status(400).json({ error: 'Enter an amount between 10 and 10000' });
+  }
+
+  const merchantVpa = process.env.UPI_MERCHANT_VPA || 'merchant@upi';
+  const merchantName = process.env.UPI_MERCHANT_NAME || 'Playbook Arena';
+  const payment = {
+    id: `UPI${Date.now()}`,
+    amount,
+    customerUpiId: upiId,
+    status: 'created',
+    createdAt: new Date().toISOString()
+  };
+  const upiParams = new URLSearchParams({
+    pa: merchantVpa,
+    pn: merchantName,
+    am: amount.toFixed(2),
+    cu: 'INR',
+    tn: `Wallet top-up ${payment.id}`
   });
+
+  payment.intentUrl = `upi://pay?${upiParams.toString()}`;
+  pendingPayments.set(payment.id, payment);
+  res.status(201).json({ payment });
+});
+
+app.post('/api/payments/upi/:paymentId/confirm', (req, res) => {
+  const payment = pendingPayments.get(req.params.paymentId);
+
+  if (!payment) {
+    return res.status(404).json({ error: 'Payment session not found' });
+  }
+
+  const wallet = readJson('wallet.json');
+  wallet.balance += payment.amount;
+  wallet.transactions.unshift({
+    id: payment.id,
+    type: 'UPI Top-up',
+    amount: payment.amount,
+    date: new Date().toISOString().slice(0, 10)
+  });
+
+  payment.status = 'confirmed';
+  pendingPayments.delete(payment.id);
+  writeJson('wallet.json', wallet);
+  res.json({ payment, wallet });
 });
 
 const clientDist = path.join(__dirname, '..', 'client', 'dist');

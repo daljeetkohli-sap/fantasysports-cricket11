@@ -8,6 +8,16 @@
 body { margin: 0; background: linear-gradient(180deg, #0f172a, #111827); }
 a { color: inherit; text-decoration: none; }
 button { font: inherit; cursor: pointer; }
+input {
+  width: 100%;
+  margin-top: 6px;
+  padding: 11px 12px;
+  color: #f8fafc;
+  background: rgba(15, 23, 42, 0.72);
+  border: 1px solid rgba(255,255,255,0.14);
+  border-radius: 10px;
+  font: inherit;
+}
 
 .app-shell {
   max-width: 900px;
@@ -46,7 +56,7 @@ button { font: inherit; cursor: pointer; }
 .small-text { font-size: 13px; }
 .label { margin: 0 0 6px; font-size: 12px; color: #94a3b8; }
 
-.row-between, .leader-row, .player-row, .section-header, .versus-row, .hero-actions, .player-actions, .wallet-strip {
+.row-between, .leader-row, .player-row, .section-header, .versus-row, .hero-actions, .player-actions, .wallet-strip, .auth-panel {
   display: flex;
   align-items: center;
 }
@@ -86,6 +96,12 @@ button { font: inherit; cursor: pointer; }
 .status-card { text-align: center; color: #cbd5e1; }
 .status-card.error { color: #fecaca; border-color: rgba(248, 113, 113, 0.4); }
 .status-text { margin: 0; color: #bbf7d0; font-size: 14px; }
+.auth-panel { gap: 10px; justify-content: flex-end; flex-wrap: wrap; }
+.auth-note { max-width: 220px; color: #cbd5e1; font-size: 12px; text-align: right; }
+.avatar { width: 32px; height: 32px; border-radius: 999px; object-fit: cover; }
+.payment-form { display: grid; gap: 14px; }
+.payment-form label { display: grid; gap: 4px; color: #cbd5e1; font-size: 13px; }
+.upi-box { display: grid; gap: 10px; padding-top: 4px; }
 
 .player-row, .leader-row {
   gap: 12px;
@@ -123,6 +139,8 @@ button { font: inherit; cursor: pointer; }
 
 @media (max-width: 640px) {
   .topbar { align-items: flex-start; gap: 12px; }
+  .auth-panel { justify-content: flex-start; }
+  .auth-note { text-align: left; }
   .section-header, .row-between, .versus-row, .leader-row { flex-direction: column; align-items: flex-start; }
   .bottom-nav { grid-template-columns: repeat(5, 1fr); }
 }
