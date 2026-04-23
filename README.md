@@ -7,6 +7,10 @@ A legally distinct fantasy sports app starter inspired by common fantasy contest
 - Backend: Node.js + Express
 - Mock persistence: local JSON files
 
+## Technical spec
+
+The living feature, commit, deployment, mobile, auth, payment, and roadmap spec is maintained in [TECH_SPEC_SHEET.md](TECH_SPEC_SHEET.md).
+
 ## Features
 - Contest lobby
 - Match cards
