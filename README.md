@@ -59,6 +59,12 @@ Google login and a UPI wallet top-up flow are scaffolded. Copy the `.env.example
 
 More detail: [Google Login and UPI Payments](docs/auth-and-payments.md)
 
+## Mobile app
+
+The app is also an installable mobile Progressive Web App with a manifest, icon, service worker, iOS home-screen metadata, and mobile-safe layout.
+
+More detail: [Mobile App Setup](docs/mobile-app.md)
+
 ## Notes
 - This is a starter project and not connected to real payments, real users, or real sports feeds.
 - Brand, copy, and visuals are original and intentionally not a clone of any commercial platform.

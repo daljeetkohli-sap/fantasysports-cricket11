@@ -7,6 +7,7 @@ import LeaderboardPage from './pages/LeaderboardPage';
 import WalletPage from './pages/WalletPage';
 import { useApp } from './context/AppContext';
 import GoogleSignIn from './components/GoogleSignIn';
+import InstallAppPrompt from './components/InstallAppPrompt';
 
 export default function App() {
   const { isLoading, loadError } = useApp();
@@ -43,6 +44,7 @@ export default function App() {
         <NavLink to="/my-teams">My Teams</NavLink>
         <NavLink to="/wallet">Wallet</NavLink>
       </nav>
+      <InstallAppPrompt />
     </div>
   );
 }
